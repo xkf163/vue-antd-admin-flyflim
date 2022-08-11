@@ -60,7 +60,7 @@
 <script>
     import AdvanceTable from '@/components/table/advance/AdvanceTable'
     import {dataSource as ds} from '@/services'
-    import FilmSearcher from '../../ensoft/search/FilmSearcher';
+    import FilmSearcher from '../../ensoft/search/ReportMonthSearch';
 
     export default {
         name: 'Table',

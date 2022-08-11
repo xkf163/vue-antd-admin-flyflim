@@ -17,13 +17,13 @@ const routerMapReport = {
         path: 'month',
         name: '新月报',
         invisible: true,
-        component: () => import('@/ensoft/form/ReportMonth')
+        component: () => import('@/ensoft/form/ReportMonthForm')
     },
     season: {
         path: 'season',
         name: '新季报',
         invisible: true,
-        component: () => import('@/ensoft/form/ReportSeason')
+        component: () => import('@/ensoft/form/ReportSeasonForm')
     },
     reportMonths: {
         path: 'report/months',
@@ -33,12 +33,12 @@ const routerMapReport = {
     monthStatusNew: {
         path: 'status/new',
         name: '新建',
-        component: () => import('@/ensoft/view/ReportMonth')
+        component: () => import('@/ensoft/view/ReportMonthView')
     },
     monthStatusDone: {
         path: 'status/done',
         name: '已报',
-        component: () => import('@/ensoft/view/ReportMonth')
+        component: () => import('@/ensoft/view/ReportMonthView')
     },
     reportSeasons: {
         path: 'report/seasons',
@@ -48,12 +48,12 @@ const routerMapReport = {
     seasonStatusNew: {
         path: 'status/new',
         name: '新建',
-        component: () => import('@/ensoft/view/ReportSeason')
+        component: () => import('@/ensoft/view/ReportSeasonView')
     },
     seasonStatusDone: {
         path: 'status/done',
         name: '已报',
-        component: () => import('@/ensoft/view/ReportSeason')
+        component: () => import('@/ensoft/view/ReportSeasonView')
     },
 }
 

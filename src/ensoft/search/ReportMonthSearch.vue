@@ -78,7 +78,7 @@
 
 <script>
     export default {
-        name: "FilmSearcher",
+        name: "ReportMonthSearcher",
         methods: {
             onSearch() {
                 console.log("Searcher search")

@@ -1,7 +1,7 @@
 <template>
     <a-row type="flex">
         <a-col :span="24" v-if="advanced" style="background: white;padding:30px 16px 16px 16px; border-bottom: 1px solid #d9d9d9">
-            <film-searcher @advSearch="onSearch" @advReset="onReset"/>
+            <report-month-search @advSearch="onSearch" @advReset="onReset"/>
         </a-col>
         <a-col :span="24" >
             <div class="table">
@@ -60,10 +60,11 @@
 <script>
     import AdvanceTable from '@/components/table/advance/AdvanceTable'
     import {dataSource as ds} from '@/services'
+    import ReportMonthSearch from '@/ensoft/search/ReportMonthSearch'
 
     export default {
         name: "ReportMonth",
-        components: {AdvanceTable},
+        components: {AdvanceTable, ReportMonthSearch},
         filters: {
             statusStr(val) {
                 switch (val) {

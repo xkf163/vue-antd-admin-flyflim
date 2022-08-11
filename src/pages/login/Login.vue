@@ -2,15 +2,16 @@
   <common-layout>
     <div class="top">
       <div class="header">
-        <img alt="logo" class="logo" src="@/assets/img/logo.jpg" />
-        <span class="title">{{systemName}}</span>
+        <img alt="logo" class="logo" src="@/assets/img/logoNew.png" />
+        <span class="title">浙江省发电企业安全生产监管系统</span>
       </div>
-      <div class="desc">Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+<!--      <div class="desc">{{systemName}}</div>-->
+      <div class="desc"></div>
     </div>
     <div class="login">
       <a-form @submit="onSubmit" :form="form">
-        <a-tabs size="large" :tabBarStyle="{textAlign: 'center'}" style="padding: 0 2px;">
-          <a-tab-pane tab="账户密码登录" key="1">
+        <a-tabs size="large" :tabBarStyle="{textAlign: 'left'}" style="padding: 0 2px;">
+          <a-tab-pane tab="请输入您的用户名、口令" key="1">
             <a-alert type="error" :closable="true" v-show="error" :message="error" showIcon style="margin-bottom: 24px;" />
             <a-form-item>
               <a-input
@@ -34,40 +35,14 @@
               </a-input>
             </a-form-item>
           </a-tab-pane>
-          <a-tab-pane tab="手机号登录" key="2">
-            <a-form-item>
-              <a-input size="large" placeholder="mobile number" >
-                <a-icon slot="prefix" type="mobile" />
-              </a-input>
-            </a-form-item>
-            <a-form-item>
-              <a-row :gutter="8" style="margin: 0 -4px">
-                <a-col :span="16">
-                  <a-input size="large" placeholder="captcha">
-                    <a-icon slot="prefix" type="mail" />
-                  </a-input>
-                </a-col>
-                <a-col :span="8" style="padding-left: 4px">
-                  <a-button style="width: 100%" class="captcha-button" size="large">获取验证码</a-button>
-                </a-col>
-              </a-row>
-            </a-form-item>
-          </a-tab-pane>
         </a-tabs>
         <div>
           <a-checkbox :checked="true" >自动登录</a-checkbox>
-          <a style="float: right">忘记密码</a>
+          <a style="float: right;display: none">忘记密码</a>
         </div>
         <a-form-item>
           <a-button :loading="logging" style="width: 100%;margin-top: 24px" size="large" htmlType="submit" type="primary">登录</a-button>
         </a-form-item>
-        <div>
-          其他登录方式
-          <a-icon class="icon" type="alipay-circle" />
-          <a-icon class="icon" type="taobao-circle" />
-          <a-icon class="icon" type="weibo-circle" />
-          <router-link style="float: right" to="/dashboard/workplace" >注册账户</router-link>
-        </div>
       </a-form>
     </div>
   </common-layout>

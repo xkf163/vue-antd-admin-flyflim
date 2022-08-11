@@ -19,14 +19,12 @@
           <slot></slot>
         </div>
       </a-layout-content>
-
     </a-layout>
   </a-layout>
 </template>
 
 <script>
 import AdminHeader from './header/AdminHeader'
-
 import Drawer from '../components/tool/Drawer'
 import SideMenu from '../components/menu/SideMenu'
 import Setting from '../components/setting/Setting'
