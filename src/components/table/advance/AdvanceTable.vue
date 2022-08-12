@@ -137,13 +137,13 @@
         return {
           on: {
             click: () => {
-              console.log(record, index,"单击");
+              console.log(record, index,"单击了行");
               //this.$message.info('单击了行')
             },
             dblclick: () => {
-              console.log(record, index,"双击");
-              this.$message.info('双击了行')
-              this.$emit('dblclick')
+              console.log(record, index,"双击了行");
+              //this.$message.info(双击了行)
+              this.$emit('dblclick',record)
             },
           }
         }

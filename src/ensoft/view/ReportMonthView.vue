@@ -123,11 +123,14 @@
             this.getFilmColumns()
         },
         methods: {
-            dblclick(){
+            dblclick(rowData){
+                console.log(rowData.id)
                 this.$message.info('dblclick')
+                this.$router.push("/report/month/"+rowData.id)
+            },
+            addNew(){
                 this.$router.push("/report/month")
             },
-            addNew(){console.log("addNew()")},
             delDoc(){console.log("delDoc()")},
             searcher(){
                 this.advanced = !this.advanced

@@ -4,7 +4,7 @@
                 <div>
                     <a-tabs type="card" default-active-key="1">
                         <a-tab-pane key="1" tab="基本信息">
-                            <a-form :form="form" class="AppForm">
+                            <a-form class="AppForm">
                                         <a-row>
                                             <a-col :sm="{ span: 12 }" :lg="{ span: 8 }">
                                                 <a-form-item
@@ -136,7 +136,7 @@
                                                         :labelCol= "{lg:{span: 4},sm:{span: 8}}"
                                                         :wrapperCol="{lg:{span: 12},sm:{span: 16}}"
                                                 >
-                                                    <a-date-picker v-decorator="['date-picker', config]" />
+                                                    <a-date-picker />
                                                 </a-form-item>
                                             </a-col>
                                             <a-col :sm="{ span: 12 }" :lg="{ span: 8 }" >
@@ -145,7 +145,7 @@
                                                         :labelCol= "{lg:{span: 4},sm:{span: 8}}"
                                                         :wrapperCol="{lg:{span: 12},sm:{span: 16}}"
                                                 >
-                                                    <a-date-picker v-decorator="['date-picker', config]" />
+                                                    <a-date-picker />
                                                 </a-form-item>
                                             </a-col>
                                         </a-row>
@@ -189,37 +189,38 @@
                                             </a-col>
                                         </a-row>
 
-                                        <a-row>
-                                            <a-col :sm="{ span: 24 }" :lg="{ span: 16 }" >
-                                                <a-form-item extra="longgggggggggggggggggggggggggggggggggg"
-                                                             label="附件管理"
-                                                             :labelCol= "{lg:{span: 2},sm:{span: 8}}"
-                                                             :wrapperCol="{lg:{span: 16},sm:{span: 16}}"
-                                                >
-                                                    <a-upload
-                                                            v-decorator="[
-                                                                  'upload',
-                                                                  {
-                                                                    valuePropName: 'fileList',
-                                                                    getValueFromEvent: normFile,
-                                                                  },
-                                                                ]"
-                                                            name="logo"
-                                                            action="/upload.do"
-                                                            list-type=""
-                                                    >
-                                                        <a-button> <a-icon type="upload" /> 点击上传 </a-button>
-                                                    </a-upload>
-                                                </a-form-item>
-                                            </a-col>
-                                        </a-row>
 
 
 
                             </a-form>
                         </a-tab-pane>
                         <a-tab-pane key="2" tab="所有意见" force-render>
-                            Content of Tab Pane 2
+
+                            <div class="tree-contanier">
+                                <div class="left-content">
+                                    <a-tree
+                                            v-model="checkedKeys"
+                                            checkable
+                                            :auto-expand-parent="autoExpandParent"
+                                            :selected-keys="selectedKeys"
+                                            :tree-data="treeData"
+                                            @expand="onExpand"
+                                            @check="onCheck"
+                                            showLine
+                                            defaultExpandAll
+                                    />
+                                </div>
+                                <div class="right-content">
+                                    <span>已选择</span>
+                                    <ul>
+                                        <li v-for="(item,index) in selectedKeys" :key="item.key" >
+                                            {{item.key}}
+                                            <span class="remove" title="删除" @click="removeNode({index})">删除</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
                         </a-tab-pane>
                         <a-tab-pane key="3" tab="流程跟踪">
                             Content of Tab Pane 3
@@ -228,16 +229,16 @@
                 </div>
         <footer-tool-bar>
             <a-space class="operator" >
-                <a-dropdown>
-                    <a-menu @click="handleMenuClick" slot="overlay">
-                        <a-menu-item key="delete">删除</a-menu-item>
-                        <a-menu-item key="audit">审批</a-menu-item>
-                    </a-menu>
-                    <a-button>管理员<a-icon type="left" /></a-button>
-                </a-dropdown>
-                <a-button @click="submit" type="primary"><a-icon type="right-circle"  style="margin-right: -6px;" />提交</a-button>
-                <a-button @click="delDoc" type="primary"><a-icon type="save"  style="margin-right: -6px;" />保存</a-button>
-                <a-button @click="addNew" type="danger"><a-icon type="logout" style="margin-right: -6px;" />退出</a-button>
+<!--                <a-dropdown>-->
+<!--                    <a-menu @click="handleMenuClick" slot="overlay">-->
+<!--                        <a-menu-item key="delete">删除</a-menu-item>-->
+<!--                        <a-menu-item key="audit">审批</a-menu-item>-->
+<!--                    </a-menu>-->
+<!--                    <a-button>管理员<a-icon type="left" /></a-button>-->
+<!--                </a-dropdown>-->
+<!--                <a-button @click="submiter" type="primary"><a-icon type="right-circle"  style="margin-right: -6px;" />提交</a-button>-->
+<!--                <a-button @click="saver" type="primary"><a-icon type="save"  style="margin-right: -6px;" />保存</a-button>-->
+<!--                <a-button @click="exiter" type="danger"><a-icon type="logout" style="margin-right: -6px;" />退出</a-button>-->
             </a-space>
         </footer-tool-bar>
     </a-card>
@@ -245,16 +246,182 @@
 
 <script>
     import FooterToolBar from '@/components/tool/FooterToolBar'
+
+
+    const treeData = [
+
+
+                {
+                    key: '010000',
+                    title: '浙江省能源集团有限公司',
+                    children: [
+                        { key: '010100', title: '浙江浙能北仑发电有限公司', children: [{ key: 'beilunchang', title: '北仑厂' }] },
+                        { key: '010300', title: '浙江浙能嘉兴发电有限公司', children: [{ key: 'jiaxingchang', title: '嘉兴厂' }]  },
+                        { key: '010500', title: '浙江浙能兰溪发电有限责任公司', children: [{ key: 'lanxichang', title: '兰溪厂' }]  },
+                        { key: '010700', title: '浙江浙能乐清发电有限责任公司', children: [{ key: 'yueqingchang', title: '乐清厂' }]  },
+                    ],
+                },
+                {
+                    key: '990000',
+                    title: '浙江省电力有限公司电力科学研究院',
+                    children: [
+                        { key: 'jdyrg', title: '电科院监督员（热工）' },
+                        { key: 'jdygl', title: '电科院监督员（锅炉）' }
+                    ],
+                },
+
+
+    ];
+
     export default {
         name: "ReportSeason",
-        components: {FooterToolBar}
+        components: {FooterToolBar},
+        data() {
+            return {
+                autoExpandParent: true,
+                checkedKeys: [],
+                selectedKeys: [],
+                expandedKeys:['010000'],
+                treeData,
+                tags: [], //菜单
+            };
+        },
+        watch: {
+            // checkedKeys(val) {
+            //     console.log('onCheck', val);
+            // },
+        },
+        mounted() {
+            // 初始化获取选中数据的title
+            this.getTagsData(this.treeData, this.tags)
+        },
+        methods: {
+            submiter(){},
+            exiter(){},
+            saver(){},
+            handleMenuClick(){},
+            // 菜单删除事件
+            handleClose(key, index) {
+                this.tags.splice(index, 1)
+                let result=[]
+                this.getParentId(key,this.treeData,result)
+                // 删除子级需获取父级id一同删除 否则父级选中状态依旧存在
+                result.map(item=>{
+                    this.checkedKeys=this.checkedKeys.filter(its=>its!=item)
+                })
+            },
+            // 初始化数据处理 通过key 获取title
+            getTagsData(data, tags) {
+                data.map((item) => {
+                    this.checkedKeys.map((its) => {
+                        if (item.key === its) {
+                            tags.push({
+                                key: item.key,
+                                title: item.title,
+                                isShow: item.children && item.children.length > 0 ? false : true,
+                            })
+                        }
+                    })
+                    if (item.children) {
+                        this.getTagsData(item.children, tags)
+                    }
+                })
+            },
+            // 获取父级id
+            getParentId(id, list = [], result = []) {
+                for (let i = 0; i < list.length; i += 1) {
+                    const item = list[i]
+                    if (item.key === id) {
+                        result.push(item.key)
+                        if (result.length === 1) return result
+                        return true
+                    }
+                    // 如果存在下级节点，则继续遍历
+                    if (item.children) {
+                        // 预设本次是需要的节点并加入到最终结果result中
+                        result.push(item.key)
+                        const find = this.getParentId(id, item.children, result)
+                        // 如果不是false则表示找到了，直接return，结束递归
+                        if (find) {
+                            return result
+                        }
+                        // 到这里，意味着本次并不是需要的节点，则在result中移除
+                        result.pop()
+                    }
+                }
+                // 如果都走到这儿了，也就是本轮遍历children没找到，将此次标记为false
+                return false
+            },
+            onExpand(expandedKeys) {
+                console.log('onExpand', expandedKeys);
+                // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+                // or, you can remove all expanded children keys.
+                this.expandedKeys = expandedKeys;
+                this.autoExpandParent = false;
+            },
+            // 复选框事件
+            onCheck(checkedKeys, e) {
+                console.log(e && e.checkedNodes && e.checkedNodes.length)
+                if (e && e.checkedNodes && e.checkedNodes.length) {
+                    // console.log(1, val, data)
+                    this.checkedKeys = checkedKeys
+                    e.checkedNodes.map((item) => {
+                        this.selectedKeys.push({
+                            key: item.key
+                        })
+                    })
+                } else {
+                    this.selectedKeys = []
+                    this.checkedKeys = []
+                }
+            },
+
+            // 删除节点
+            removeNode(i){
+                const checkedNodes = this.selectedKeys
+                checkedNodes.splice(i, 1)
+                this.checkedKeys = checkedNodes
+                checkedNodes.map((item) => {
+                    this.selectedKeys.push({
+                        key: item.key
+                    })
+                })
+            },
+
+            onSelect(selectedKeys, info) {
+                console.log('onSelect', info);
+                this.selectedKeys = selectedKeys;
+            },
+        },
     }
 </script>
 
-<style>
-
+<style scoped lang="less">
         .ant-form-item{
             margin-bottom: 12px;
         }
-
+        .tree-contanier {
+            display: flex;
+            .site-tree-search-value {
+                color: #f50;
+            }
+            .left-content {
+                flex: 1;
+                padding-right: 40px;
+            }
+            .right-content {
+                flex: 1;
+                padding-left: 40px;
+                .select-item {
+                    padding: 10px 0;
+                    .remove {
+                        margin-left: 30px;
+                        &:hover {
+                            color: #1890ff;
+                        }
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
 </style>

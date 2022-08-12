@@ -111,8 +111,6 @@
                                             v-decorator="[
                                                                   'upload',
                                                                   {
-                                                                    valuePropName: 'fileList',
-                                                                    getValueFromEvent: normFile,
                                                                   },
                                                                 ]"
                                             name="logo"
@@ -126,18 +124,55 @@
                         </a-row>
 
 
+
                     </a-form>
                 </a-tab-pane>
                 <a-tab-pane key="2" tab="所有意见" force-render>
-                    Content of Tab Pane 2
+                    <a-row>
+                        <a-transfer
+                                class="tree-transfer"
+                                :data-source="dataSource"
+                                :target-keys="targetKeys"
+                                :render="item => item.title"
+                                :show-select-all="true"
+                                @change="onChange"
+                                @selectChange = "onSelectChange"
+                                :showSearch="true"
+                                :titles="['A','B']"
+                        >
+                            <template
+                                    slot="children"
+                                    slot-scope="{ props: { direction, selectedKeys }, on: { itemSelect } }"
+                            >
+                                <a-tree
+                                        v-if="direction === 'left'"
+                                        blockNode
+                                        checkable
+                                        checkStrictly
+                                        defaultExpandAll
+                                        :checkedKeys="[...selectedKeys, ...targetKeys]"
+                                        :treeData="treeData"
+                                        @check="
+                                                    (_, props) => {
+                                                      onChecked(_, props, [...selectedKeys, ...targetKeys], itemSelect);
+                                                    }
+                                             "
+                                        @select="
+                                                (_, props) => {
+                                                  onChecked(_, props, [...selectedKeys, ...targetKeys], itemSelect);
+                                                }
+                                             "
+                                />
+                            </template>
+                        </a-transfer>
+
+                    </a-row>
                 </a-tab-pane>
                 <a-tab-pane key="3" tab="流程跟踪">
                     Content of Tab Pane 3
                 </a-tab-pane>
             </a-tabs>
         </div>
-
-
 
 
         <footer-tool-bar>
@@ -164,9 +199,90 @@
 
 <script>
     import FooterToolBar from '@/components/tool/FooterToolBar'
+
+
+    const treeData = [
+        {
+            key: '000000',
+            title: '国家能源局浙江监管办公室',
+            children: [
+                { key: 'zhejiangban', title: '浙江办' },
+                {
+                    key: '010000',
+                    title: '浙江省能源集团有限公司',
+                    children: [
+                        { key: '010100', title: '浙江浙能北仑发电有限公司', children: [{ key: 'beilunchang', title: '北仑厂' }] },
+                        { key: '010300', title: '浙江浙能嘉兴发电有限公司', children: [{ key: 'jiaxingchang', title: '嘉兴厂' }]  },
+                        { key: '010500', title: '浙江浙能兰溪发电有限责任公司', children: [{ key: 'lanxichang', title: '兰溪厂' }]  },
+                        { key: '010700', title: '浙江浙能乐清发电有限责任公司', children: [{ key: 'yueqingchang', title: '乐清厂' }]  },
+                    ],
+                },
+                {
+                    key: '990000',
+                    title: '浙江省电力有限公司电力科学研究院',
+                    children: [
+                        { key: 'jdyrg', title: '电科院监督员（热工）' },
+                        { key: 'jdygl', title: '电科院监督员（锅炉）' }
+                    ],
+                },
+            ],
+        }
+    ];
+
+    const transferDataSource = [];
+    function flatten(list = []) {
+        list.forEach(item => {
+            transferDataSource.push(item);
+            flatten(item.children);
+        });
+    }
+    flatten(JSON.parse(JSON.stringify(treeData)));
+
+    function isChecked(selectedKeys, eventKey) {
+        return selectedKeys.indexOf(eventKey) !== -1;
+    }
+
+    function handleTreeData(data, targetKeys = []) {
+        data.forEach(item => {
+            item['disabled'] = targetKeys.includes(item.key);
+            if (item.children) {
+                handleTreeData(item.children, targetKeys);
+            }
+        });
+        return data;
+    }
+
     export default {
         name: "ReportMonth",
-        components: {FooterToolBar}
+        components: {FooterToolBar},
+        data() {
+            return {
+                targetKeys: [],
+                dataSource: transferDataSource,
+            };
+        },
+        computed: {
+            treeData() {
+                return handleTreeData(treeData, this.targetKeys);
+            },
+        },
+        methods: {
+            onChange(targetKeys, direction, moveKeys) {
+                console.log('Target Keys:', targetKeys);
+                console.log('direction:', direction);
+                console.log('moveKeys:', moveKeys);
+                this.targetKeys = targetKeys;
+            },
+            onChecked(_, e, checkedKeys, itemSelect) {
+                console.log("onChecked")
+                const { eventKey } = e.node;
+                itemSelect(eventKey, !isChecked(checkedKeys, eventKey));
+            },
+            onSelectChange(sourceSelectedKeys, targetSelectedKeys){
+                console.log(sourceSelectedKeys)
+                console.log(targetSelectedKeys)
+            }
+        },
     }
 </script>
 
@@ -174,6 +290,10 @@
 
     .ant-form-item{
         margin-bottom: 12px;
+    }
+    .tree-transfer .ant-transfer-list:first-child {
+        width: 50%;
+        flex: none;
     }
 
 </style>

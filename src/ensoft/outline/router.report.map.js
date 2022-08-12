@@ -5,7 +5,6 @@ const view = {
     page: () => import('@/layouts/PageView')
 }
 
-
 // 路由组件注册
 const routerMapReport = {
     report: {
@@ -15,46 +14,60 @@ const routerMapReport = {
     },
     month: {
         path: 'month',
-        name: '新月报',
+        //name: '月报新建',
         invisible: true,
         component: () => import('@/ensoft/form/ReportMonthForm')
     },
+    monthDetail: {
+        path: ':id',
+        name: '月报',
+        invisible: true,
+    },
     season: {
         path: 'season',
-        name: '新季报',
+        //name: '季报新建',
         invisible: true,
         component: () => import('@/ensoft/form/ReportSeasonForm')
     },
+    seasonDetail: {
+        path: ':id',
+        name: '季报',
+        invisible: true,
+        //component: () => import('@/ensoft/form/ReportSeasonForm')
+    },
     reportMonths: {
+        name: '信息月报导航',
         path: 'report/months',
         component: view.blank,
         //invisible: true
     },
-    monthStatusNew: {
+    monthListNew: {
         path: 'status/new',
         name: '新建',
         component: () => import('@/ensoft/view/ReportMonthView')
     },
-    monthStatusDone: {
+    monthListDone: {
         path: 'status/done',
-        name: '已报',
+        name: '月报视图已报',
         component: () => import('@/ensoft/view/ReportMonthView')
     },
     reportSeasons: {
+        name: '信息季报导航',
         path: 'report/seasons',
         component: view.blank,
         //invisible: true
     },
-    seasonStatusNew: {
+    seasonListNew: {
         path: 'status/new',
-        name: '新建',
+        name: '季报视图新建',
         component: () => import('@/ensoft/view/ReportSeasonView')
     },
-    seasonStatusDone: {
+    seasonListDone: {
         path: 'status/done',
-        name: '已报',
+        name: '季报视图已报',
         component: () => import('@/ensoft/view/ReportSeasonView')
     },
+
 }
 
 export default routerMapReport

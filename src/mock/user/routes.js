@@ -13,20 +13,68 @@ Mock.mock(`${process.env.VUE_APP_API_BASE_URL}/routes`, 'get', () => {
       {
         router: 'report',
         name: '信息报送',
+        children: [
+          {
+            router: 'month',
+            name: '月报表单新建',
+            children: ['monthDetail']
+          },
+          {
+            router: 'season',
+            name: '季报表单新建',
+            children: ['seasonDetail']
+          },
+        ]
+      },
+/*
+      {
+        router: 'report',
+        name: '信息报送',
         children: ['month','season']
       },
+      {
+        router: 'month',
+        name: '信息月报详情',
+        children: ['monthShow']
+      },
+      {
+        router: 'season',
+        name: '信息季报详情',
+        children: ['seasonShow']
+      },
+
+ */
       {
         router: 'reportMonths',
         name: '信息月报',
         icon: 'cloud-server',
-        children: ['monthStatusNew','monthStatusDone']
+        children: [
+          {
+            router: 'monthListNew',
+            name: '新建',
+          },
+          {
+            router: 'monthListDone',
+            name: '已报',
+          }
+        ]
       },
       {
         router: 'reportSeasons',
         name: '信息季报',
         icon: 'cloud-server',
-        children: ['seasonStatusNew','seasonStatusDone']
+        children: [
+          {
+            router: 'seasonListNew',
+            name: '新建',
+          },
+          {
+            router: 'seasonListDone',
+            name: '已报',
+          }
+        ]
       },
+
       {
         router: 'local',
         name: '本地',

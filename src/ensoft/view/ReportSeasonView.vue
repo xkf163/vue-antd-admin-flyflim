@@ -122,9 +122,9 @@
             this.getFilmColumns()
         },
         methods: {
-            dblclick(){
+            dblclick(rowData){
                 this.$message.info('dblclick')
-                this.$router.push("/report/season")
+                this.$router.push("/report/season/"+rowData.id)
             },
             addNew(){console.log("addNew()")},
             delDoc(){console.log("delDoc()")},
