@@ -214,8 +214,17 @@
                                     <span>已选择</span>
                                     <ul>
                                         <li v-for="(item,index) in selectedKeys" :key="item.key" >
-                                            {{item.key}}
-                                            <span class="remove" title="删除" @click="removeNode({index})">删除</span>
+                                            {{index}}：{{item.key}}
+                                            <span class="remove" title="删除" @click="removeNode(item.key,index)"><a-icon type="rest" /></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="right-content">
+                                    <span>已选</span>
+                                    <ul>
+                                        <li v-for="(item,index) in checkedKeys" :key="item.key" >
+                                            {{index}}：{{item}}
+                                            <span class="remove" title="删除" @click="removeNode({index})"><a-icon type="rest" /></span>
                                         </li>
                                     </ul>
                                 </div>
@@ -229,16 +238,16 @@
                 </div>
         <footer-tool-bar>
             <a-space class="operator" >
-<!--                <a-dropdown>-->
-<!--                    <a-menu @click="handleMenuClick" slot="overlay">-->
-<!--                        <a-menu-item key="delete">删除</a-menu-item>-->
-<!--                        <a-menu-item key="audit">审批</a-menu-item>-->
-<!--                    </a-menu>-->
-<!--                    <a-button>管理员<a-icon type="left" /></a-button>-->
-<!--                </a-dropdown>-->
-<!--                <a-button @click="submiter" type="primary"><a-icon type="right-circle"  style="margin-right: -6px;" />提交</a-button>-->
-<!--                <a-button @click="saver" type="primary"><a-icon type="save"  style="margin-right: -6px;" />保存</a-button>-->
-<!--                <a-button @click="exiter" type="danger"><a-icon type="logout" style="margin-right: -6px;" />退出</a-button>-->
+                <a-dropdown>
+                    <a-menu @click="handleMenuClick" slot="overlay">
+                        <a-menu-item key="delete">删除</a-menu-item>
+                        <a-menu-item key="audit">审批</a-menu-item>
+                    </a-menu>
+                    <a-button>管理员<a-icon type="left" /></a-button>
+                </a-dropdown>
+                <a-button @click="submiter" type="primary"><a-icon type="right-circle"  style="margin-right: -6px;" />提交</a-button>
+                <a-button @click="saver" type="primary"><a-icon type="save"  style="margin-right: -6px;" />保存</a-button>
+                <a-button @click="exiter" type="danger"><a-icon type="logout" style="margin-right: -6px;" />退出</a-button>
             </a-space>
         </footer-tool-bar>
     </a-card>
@@ -246,31 +255,25 @@
 
 <script>
     import FooterToolBar from '@/components/tool/FooterToolBar'
-
-
     const treeData = [
-
-
-                {
-                    key: '010000',
-                    title: '浙江省能源集团有限公司',
-                    children: [
-                        { key: '010100', title: '浙江浙能北仑发电有限公司', children: [{ key: 'beilunchang', title: '北仑厂' }] },
-                        { key: '010300', title: '浙江浙能嘉兴发电有限公司', children: [{ key: 'jiaxingchang', title: '嘉兴厂' }]  },
-                        { key: '010500', title: '浙江浙能兰溪发电有限责任公司', children: [{ key: 'lanxichang', title: '兰溪厂' }]  },
-                        { key: '010700', title: '浙江浙能乐清发电有限责任公司', children: [{ key: 'yueqingchang', title: '乐清厂' }]  },
-                    ],
-                },
-                {
-                    key: '990000',
-                    title: '浙江省电力有限公司电力科学研究院',
-                    children: [
-                        { key: 'jdyrg', title: '电科院监督员（热工）' },
-                        { key: 'jdygl', title: '电科院监督员（锅炉）' }
-                    ],
-                },
-
-
+        {
+            key: '010000',
+            title: '浙江省能源集团有限公司',
+            children: [
+                { key: '010100', title: '浙江浙能北仑发电有限公司', children: [{ key: 'beilunchang', title: '北仑厂' }] },
+                { key: '010300', title: '浙江浙能嘉兴发电有限公司', children: [{ key: 'jiaxingchang', title: '嘉兴厂' }]  },
+                { key: '010500', title: '浙江浙能兰溪发电有限责任公司', children: [{ key: 'lanxichang', title: '兰溪厂' }]  },
+                { key: '010700', title: '浙江浙能乐清发电有限责任公司', children: [{ key: 'yueqingchang', title: '乐清厂' }]  },
+            ],
+        },
+        {
+            key: '990000',
+            title: '浙江省电力有限公司电力科学研究院',
+            children: [
+                { key: 'jdyrg', title: '电科院监督员（热工）' },
+                { key: 'jdygl', title: '电科院监督员（锅炉）' }
+            ],
+        },
     ];
 
     export default {
@@ -283,7 +286,7 @@
                 selectedKeys: [],
                 expandedKeys:['010000'],
                 treeData,
-                tags: [], //菜单
+                tags: [], //
             };
         },
         watch: {
@@ -327,6 +330,43 @@
                     }
                 })
             },
+
+            onExpand(expandedKeys) {
+                console.log('onExpand', expandedKeys);
+                // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+                // or, you can remove all expanded children keys.
+                this.expandedKeys = expandedKeys;
+                this.autoExpandParent = false;
+            },
+            // 复选框事件
+            onCheck(checkedKeys, e) {
+                console.log(e && e.checkedNodes && e.checkedNodes.length)
+                if (e && e.checkedNodes && e.checkedNodes.length) {
+                    // console.log(1, val, data)
+                    this.checkedKeys  = checkedKeys
+                    this.selectedKeys = []
+                    e.checkedNodes.map((item) => {
+                        this.selectedKeys.push({
+                            key: item.key
+                        })
+                    })
+                } else {
+                    this.selectedKeys = []
+                    this.checkedKeys = []
+                }
+
+                console.log("checkedKeys   :"+this.checkedKeys)
+                console.log("selectedKeys   :"+this.selectedKeys[0])
+                console.log(this.selectedKeys)
+            },
+
+            // 删除节点
+            removeNode(key,i){
+                console.log(key +" - "+ i)
+                this.selectedKeys.splice(i, 1)
+                this.checkedKeys= this.selectedKeys.join(",")
+            },
+
             // 获取父级id
             getParentId(id, list = [], result = []) {
                 for (let i = 0; i < list.length; i += 1) {
@@ -352,42 +392,6 @@
                 // 如果都走到这儿了，也就是本轮遍历children没找到，将此次标记为false
                 return false
             },
-            onExpand(expandedKeys) {
-                console.log('onExpand', expandedKeys);
-                // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-                // or, you can remove all expanded children keys.
-                this.expandedKeys = expandedKeys;
-                this.autoExpandParent = false;
-            },
-            // 复选框事件
-            onCheck(checkedKeys, e) {
-                console.log(e && e.checkedNodes && e.checkedNodes.length)
-                if (e && e.checkedNodes && e.checkedNodes.length) {
-                    // console.log(1, val, data)
-                    this.checkedKeys = checkedKeys
-                    e.checkedNodes.map((item) => {
-                        this.selectedKeys.push({
-                            key: item.key
-                        })
-                    })
-                } else {
-                    this.selectedKeys = []
-                    this.checkedKeys = []
-                }
-            },
-
-            // 删除节点
-            removeNode(i){
-                const checkedNodes = this.selectedKeys
-                checkedNodes.splice(i, 1)
-                this.checkedKeys = checkedNodes
-                checkedNodes.map((item) => {
-                    this.selectedKeys.push({
-                        key: item.key
-                    })
-                })
-            },
-
             onSelect(selectedKeys, info) {
                 console.log('onSelect', info);
                 this.selectedKeys = selectedKeys;
