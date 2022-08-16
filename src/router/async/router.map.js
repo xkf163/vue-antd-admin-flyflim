@@ -14,34 +14,22 @@ const routerMap = {
   },
   root: {
     path: '/',
-    name: '首页',
+    //name: '首页',
     redirect: '/login',
     component: view.tabs
   },
-  local: {
-    name: '本地',
-    component: view.blank
-  },
-  localStars: {
-    path: 'stars',
-    name: '按人',
-    component: () => import('@/pages/form/basic')
-  },
-  localFilms: {
-    path: 'films',
-    name: '按影',
-    component: () => import('@/pages/film')
-  },
   dashboard: {
-    name: 'Dashboard',
+    name: '首页',
     component: view.blank
   },
   workplace: {
     name: '工作台',
+    icon: 'cloud-upload',
     component: () => import('@/pages/dashboard/workplace')
   },
   analysis: {
     name: '分析页',
+    icon: 'cloud-upload',
     component: () => import('@/pages/dashboard/analysis')
   },
   form: {
