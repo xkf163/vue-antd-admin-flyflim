@@ -206,6 +206,7 @@
                                             :tree-data="treeData"
                                             @expand="onExpand"
                                             @check="onCheck"
+                                            @select="onSelect"
                                             showLine
                                             defaultExpandAll
                                     />
@@ -213,19 +214,23 @@
                                 <div class="right-content">
                                     <span>已选择</span>
                                     <ul>
-                                        <li v-for="(item,index) in selectedKeys" :key="item.key" >
-                                            {{index}}：{{item.key}}
-                                            <span class="remove" title="删除" @click="removeNode(item.key,index)"><a-icon type="rest" /></span>
-                                        </li>
+                                        <template  v-for="(item,index) in selectedKeys">
+                                            <li v-if="item.isShow" :key="item.key">
+                                                {{index}}：{{item.title}}：{{item.pid}}
+                                                <span class="remove" title="删除" @click="removeNode(item.key,index)"><a-icon type="rest" /></span>
+                                            </li>
+                                        </template>
                                     </ul>
                                 </div>
                                 <div class="right-content">
                                     <span>已选</span>
                                     <ul>
-                                        <li v-for="(item,index) in checkedKeys" :key="item.key" >
-                                            {{index}}：{{item}}
-                                            <span class="remove" title="删除" @click="removeNode({index})"><a-icon type="rest" /></span>
-                                        </li>
+                                        <template  v-for="(item,index) in checkedKeys">
+                                            <li :key="item.key" >
+                                                {{index}}：{{item}}
+                                                <span class="remove" title="删除" @click="removeNode({index})"><a-icon type="rest" /></span>
+                                            </li>
+                                        </template>
                                     </ul>
                                 </div>
                             </div>
@@ -259,19 +264,23 @@
         {
             key: '010000',
             title: '浙江省能源集团有限公司',
+            unid:'1',
+            pid:'000000',
             children: [
-                { key: '010100', title: '浙江浙能北仑发电有限公司', children: [{ key: 'beilunchang', title: '北仑厂' }] },
-                { key: '010300', title: '浙江浙能嘉兴发电有限公司', children: [{ key: 'jiaxingchang', title: '嘉兴厂' }]  },
-                { key: '010500', title: '浙江浙能兰溪发电有限责任公司', children: [{ key: 'lanxichang', title: '兰溪厂' }]  },
-                { key: '010700', title: '浙江浙能乐清发电有限责任公司', children: [{ key: 'yueqingchang', title: '乐清厂' }]  },
+                { key: '010100', title: '浙江浙能北仑发电有限公司', unid: '2', pid: '010000', children: [{ key: 'beilunchang', title: '北仑厂', unid: '6', pid: '010100' }] },
+                { key: '010300', title: '浙江浙能嘉兴发电有限公司', unid: '3', pid: '010000', children: [{ key: 'jiaxingchang', title: '嘉兴厂', unid: '7', pid: '010300' }]  },
+                { key: '010500', title: '浙江浙能兰溪发电有限责任公司', unid: '4', pid: '010000', children: [{ key: 'lanxichang', title: '兰溪厂', unid: '8', pid: '010500' }]  },
+                { key: '010700', title: '浙江浙能乐清发电有限责任公司', unid: '5', pid: '010000', children: [{ key: 'yueqingchang', title: '乐清厂', unid: '9', pid: '010700'}] }
             ],
         },
         {
             key: '990000',
             title: '浙江省电力有限公司电力科学研究院',
+            unid:'10',
+            pid:'000000',
             children: [
-                { key: 'jdyrg', title: '电科院监督员（热工）' },
-                { key: 'jdygl', title: '电科院监督员（锅炉）' }
+                { key: 'jdyrg', title: '电科院监督员（热工）', unid: '11', pid: '010100' },
+                { key: 'jdygl', title: '电科院监督员（锅炉）', unid: '12', pid: '010100'  }
             ],
         },
     ];
@@ -345,9 +354,14 @@
                     // console.log(1, val, data)
                     this.checkedKeys  = checkedKeys
                     this.selectedKeys = []
+                    console.log(e.checkedNodes)
                     e.checkedNodes.map((item) => {
+                        console.log(item)
                         this.selectedKeys.push({
-                            key: item.key
+                            title: item.data.props.title,
+                            pid: item.data.props.pid,
+                            key: item.key,
+                            isShow: item.data.props.dataRef.children && item.data.props.dataRef.children.length > 0 ? false : true, // 有子级的父级不显示
                         })
                     })
                 } else {
@@ -392,10 +406,30 @@
                 // 如果都走到这儿了，也就是本轮遍历children没找到，将此次标记为false
                 return false
             },
-            onSelect(selectedKeys, info) {
-                console.log('onSelect', info);
-                this.selectedKeys = selectedKeys;
-            },
+
+             onSelect(selectedKeys, e) {
+                console.log(e)
+                //let nodeTags = []
+                e.nativeEvent.path.map((item)=>{
+                    console.log(item)
+                })
+
+
+            //     const node = e.nativeEvent?.path?.find((item) => {
+            //         return toArray(item?.classList).findIndex(className => className == "ant-tree-treenode") != -1;
+            //     });
+                // const toArray = (list) => Array.from(list || []);
+                // // 获取被点击的树节点
+                // const node = e.nativeEvent?.path?.find((item: any) => {
+                //     return toArray(item?.classList).findIndex(className => className == "ant-tree-treenode") != -1;
+                // });
+                // // 获取复选框
+                // const checkbox: any = toArray(node?.childNodes).find((item: any) => {
+                //     return toArray(item?.classList).findIndex(className => className == "ant-tree-checkbox") != -1;
+                // })
+                // // 模拟点击
+                // checkbox?.click();
+             },
         },
     }
 </script>
