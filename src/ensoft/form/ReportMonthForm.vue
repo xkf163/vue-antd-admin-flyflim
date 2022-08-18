@@ -39,9 +39,9 @@
                             </a-col>
                             <a-col :sm="{ span: 12 }" :lg="{ span: 8 }" >
                                 <a-form-item
-                                        label="报送日期"
-                                        :labelCol= "{lg:{span: 4},sm:{span: 8}}"
-                                        :wrapperCol="{lg:{span: 20},sm:{span: 16}}"
+                                        label="报送日期报送日期"
+                                        :labelCol= "{lg:{span: 8},sm:{span: 8}}"
+                                        :wrapperCol="{lg:{span: 16},sm:{span: 16}}"
                                 >
                                     <span>2022-08-10</span>
                                 </a-form-item>
@@ -60,8 +60,8 @@
                             <a-col :sm="{ span: 12 }" :lg="{ span: 8 }" >
                                 <a-form-item
                                         label="填录日期"
-                                        :labelCol= "{lg:{span: 4},sm:{span: 8}}"
-                                        :wrapperCol="{lg:{span: 20},sm:{span: 16}}"
+                                        :labelCol= "{lg:{span: 8},sm:{span: 8}}"
+                                        :wrapperCol="{lg:{span: 16},sm:{span: 16}}"
                                 >
                                     <span>2022-08-10</span>
 
@@ -99,7 +99,7 @@
                                 <a-form-item
                                         label="月报类别"
                                         :labelCol= "{lg:{span: 4},sm:{span: 8}}"
-                                        :wrapperCol="{lg:{span: 20},sm:{span: 16}}"
+                                        :wrapperCol="{lg:{span: 16},sm:{span: 16}}"
                                 >
                                     <a-select>
                                         <a-select-option value="4">技术监督月报</a-select-option>

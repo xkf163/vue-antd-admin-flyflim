@@ -195,21 +195,29 @@
                             </a-form>
                         </a-tab-pane>
                         <a-tab-pane key="2" tab="所有意见" force-render>
-
                             <div class="tree-contanier">
                                 <div class="left-content">
+                                    <a-input-search :value="searchValue" style="margin-bottom: 8px" placeholder="Search" />
                                     <a-tree
                                             v-model="checkedKeys"
                                             checkable
                                             :auto-expand-parent="autoExpandParent"
                                             :selected-keys="selectedKeys"
                                             :tree-data="treeData"
-                                            @expand="onExpand"
                                             @check="onCheck"
                                             @select="onSelect"
                                             showLine
                                             defaultExpandAll
-                                    />
+                                    >
+                                        <template #title="{ title }">
+                                            <span v-if="title.indexOf(searchValue) > -1">
+                                              {{ title.substr(0, title.indexOf(searchValue)) }}
+                                              <span style="color: #f50">{{ searchValue }}</span>
+                                              {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
+                                            </span>
+                                            <span v-else>{{ title }}</span>
+                                        </template>
+                                    </a-tree>
                                 </div>
                                 <div class="right-content">
                                     <span>已选择</span>
@@ -295,7 +303,7 @@
                 selectedKeys: [],
                 expandedKeys:['010000'],
                 treeData,
-                tags: [], //
+                searchValue: ''
             };
         },
         watch: {
@@ -312,16 +320,7 @@
             exiter(){},
             saver(){},
             handleMenuClick(){},
-            // 菜单删除事件
-            handleClose(key, index) {
-                this.tags.splice(index, 1)
-                let result=[]
-                this.getParentId(key,this.treeData,result)
-                // 删除子级需获取父级id一同删除 否则父级选中状态依旧存在
-                result.map(item=>{
-                    this.checkedKeys=this.checkedKeys.filter(its=>its!=item)
-                })
-            },
+
             // 初始化数据处理 通过key 获取title
             getTagsData(data, tags) {
                 data.map((item) => {
@@ -339,7 +338,6 @@
                     }
                 })
             },
-
             onExpand(expandedKeys) {
                 console.log('onExpand', expandedKeys);
                 // if not set autoExpandParent to false, if children expanded, parent can not collapse.
@@ -349,7 +347,9 @@
             },
             // 复选框事件
             onCheck(checkedKeys, e) {
-                console.log(e && e.checkedNodes && e.checkedNodes.length)
+                //console.log(e && e.checkedNodes && e.checkedNodes.length)
+                console.log("checkedKeys  args :"+checkedKeys)
+                console.log(checkedKeys)
                 if (e && e.checkedNodes && e.checkedNodes.length) {
                     // console.log(1, val, data)
                     this.checkedKeys  = checkedKeys
@@ -378,7 +378,12 @@
             removeNode(key,i){
                 console.log(key +" - "+ i)
                 this.selectedKeys.splice(i, 1)
-                this.checkedKeys= this.selectedKeys.join(",")
+                let result=[]
+                this.getParentId(key,this.treeData,result)
+                // 删除子级需获取父级id一同删除 否则父级选中状态依旧存在
+                result.map(item=>{
+                    this.checkedKeys=this.checkedKeys.filter(its=>its!=item)
+                })
             },
 
             // 获取父级id
@@ -408,26 +413,27 @@
             },
 
              onSelect(selectedKeys, e) {
-                console.log(e)
-                //let nodeTags = []
-                e.nativeEvent.path.map((item)=>{
-                    console.log(item)
-                })
+                 // 获取被点击的树节点
+                 const toArray = (list) => Array.from(list || []);
+                 const node = e.nativeEvent.path.find((item)=>{
+                    return toArray(item.classList).findIndex(className => className == "ant-tree-treenode-switcher-open") != -1;
+                 })
+                 // 获取复选框
+                 const checkbox = toArray(node.childNodes).find((item) => {
+                     return toArray(item.classList).findIndex(className => className == "ant-tree-checkbox") != -1;
+                 })
+                 // 模拟点击
+                 checkbox.click();
 
-
-            //     const node = e.nativeEvent?.path?.find((item) => {
-            //         return toArray(item?.classList).findIndex(className => className == "ant-tree-treenode") != -1;
-            //     });
-                // const toArray = (list) => Array.from(list || []);
-                // // 获取被点击的树节点
+                // 获取被点击的树节点
                 // const node = e.nativeEvent?.path?.find((item: any) => {
                 //     return toArray(item?.classList).findIndex(className => className == "ant-tree-treenode") != -1;
                 // });
-                // // 获取复选框
+                // 获取复选框
                 // const checkbox: any = toArray(node?.childNodes).find((item: any) => {
                 //     return toArray(item?.classList).findIndex(className => className == "ant-tree-checkbox") != -1;
                 // })
-                // // 模拟点击
+                // 模拟点击
                 // checkbox?.click();
              },
         },
